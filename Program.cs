@@ -128,54 +128,54 @@ namespace ISM6225_Assignment_2_Spring_2022
         {
             try
             {
-                //write your code here.
-                // converting all the words into lower case
-                paragraph = paragraph.ToLower();
-                //replacing special characters with space
-                paragraph = paragraph.Replace(',', ' ');
-                paragraph = paragraph.Replace('.', ' ');
-                // removing the xtra spaces
-                paragraph = paragraph.Trim();
-                Console.WriteLine(paragraph);
-                // splitting the input 
-                string[] ipsplit = paragraph.Split(' ');
-                int length = ipsplit.Length;
-                // using dictionary for getting kvp
-                IDictionary<string, int> count = new Dictionary<string, int>();
-                for (int i = 0; i < length; i++)
+                string s = "";
+                //Removing special characters from the string
+                foreach (char c in paragraph)
                 {
-
-                    if (count.ContainsKey(ipsplit[i]))
+                    if (c != '!' && c != '?' && c != '\'' && c != ';' && c != ',' && c != '.')
                     {
-                        // increasing the count if the word repeats
-                        count[ipsplit[i]]++;
+                        s = s + c;
                     }
                     else
                     {
-                        // adding the new word
-                        count.Add(ipsplit[i], 1);
+                        s = s + ' ';
                     }
-                    for (int j = 0; j < banned.Length; j++)
+                }
+                //converting new string to lower case
+                string s1 = s.ToLower();
+                string[] s2 = s1.Split(" ");
+                foreach (string x in s2)
+                {
+                    s2 = s2.Where(y => y != "").ToArray();
+                }
+                foreach (string x in banned)
+                {
+                    s2 = s2.Where(y => y != x.ToLower()).ToArray();
+                }
+                Dictionary<string, int> lookup = new Dictionary<string, int>();
+                foreach (string a in s2.Distinct())
+                {
+                    int count = 0;
+                    foreach (string b in s2)
                     {
-                        if (ipsplit[i] == banned[j])
+                        if (a == b)
                         {
-                            //removing the banned word
-                            count.Remove(ipsplit[i]);
+                            //incrementing count by 1
+                            count = count + 1;
                         }
                     }
+                    lookup.Add(a, count);
                 }
-                int max = 0;
-                string maxKey = "";
-                foreach (KeyValuePair<string, int> kvp in count)
+                string output = "";
+                foreach (KeyValuePair<string, int> x in lookup)
                 {
-                    if (max < kvp.Value)
+                    //getting max value from dictionary values
+                    if (x.Value == lookup.Values.Max())
                     {
-                        // getting the key using value
-                        max = kvp.Value;
-                        maxKey = kvp.Key;
+                        output = x.Key;
                     }
                 }
-                return maxKey;
+                return output;
             }
             catch (Exception)
             {
@@ -216,7 +216,12 @@ namespace ISM6225_Assignment_2_Spring_2022
                         }
                     }
                 }
-                return max;
+                if (max != 0)
+                {
+                    return max;
+                }
+                else
+                    return -1;
             }
             catch (Exception)
             {
